@@ -1,0 +1,185 @@
+{%- comment -%}
+  Interactive architecture diagram for the FishDB teardown.
+  Self-contained: inline SVG + scoped CSS + a small control script.
+  Pulses ride the real edge paths via <animateMotion><mpath/>, so they never drift.
+{%- endcomment -%}
+<figure class="uth-arch" id="uth-arch-fishdb" data-flow="read" aria-label="Interactive diagram of LinkedIn's feed architecture: write path and read path meeting at the sharded index store.">
+  <div class="uth-arch__bar">
+    <span class="uth-arch__legend">REQUEST FLOW</span>
+    <div class="uth-arch__btns" role="group" aria-label="Choose which flow to animate">
+      <button type="button" data-act="read"  class="is-active">▸ Read path <small>(a query)</small></button>
+      <button type="button" data-act="write">▸ Write path <small>(a new post)</small></button>
+      <button type="button" data-act="toggle" class="uth-arch__pause">❚❚ Pause</button>
+    </div>
+  </div>
+
+  <svg viewBox="0 0 880 640" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="uth-arch__svg" role="img">
+    <defs>
+      <marker id="uth-ah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/>
+      </marker>
+      <filter id="uth-soft" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <!-- ───────── EDGES (drawn lines; also reused as pulse tracks) ───────── -->
+    <g class="uth-arch__edges">
+      <!-- write -->
+      <path id="ew1" d="M190,83 C270,83 280,65 350,65"/>
+      <path id="ew2" d="M190,83 C270,83 280,125 350,125"/>
+      <path id="ew3" d="M510,65 C590,65 600,83 664,83"/>
+      <path id="ew4" d="M510,125 C590,125 600,83 664,83"/>
+      <path id="ew5" d="M752,106 C752,168 740,200 700,214"/>
+      <!-- scatter (broker → shards) -->
+      <path id="es1" d="M635,470 C520,430 240,362 208,316"/>
+      <path id="es2" d="M635,470 C560,430 392,362 372,316"/>
+      <path id="es3" d="M635,470 C600,430 540,362 536,316"/>
+      <path id="es4" d="M635,470 C662,418 700,360 700,316"/>
+      <!-- read -->
+      <path id="er1" d="M190,493 C250,493 260,493 300,493"/>
+      <path id="er2" d="M460,493 C510,493 520,493 560,493"/>
+      <path id="er3" d="M635,516 C600,548 520,566 565,566"/>
+    </g>
+
+    <!-- ───────── NODES ───────── -->
+    <g class="uth-arch__nodes">
+      <!-- WRITE band -->
+      <g class="n n--write"><rect x="40"  y="60"  width="150" height="46" rx="9"/><text x="115" y="88">① You post</text></g>
+      <g class="n n--write"><rect x="350" y="44"  width="160" height="42" rx="9"/><text x="430" y="70">Kafka · instant</text></g>
+      <g class="n n--write"><rect x="350" y="104" width="160" height="42" rx="9"/><text x="430" y="130">HDFS · batch</text></g>
+      <g class="n n--write"><rect x="664" y="60"  width="176" height="46" rx="9"/><text x="752" y="83">1 indexer + writer</text><text x="752" y="99" class="sub">strict 1:1</text></g>
+
+      <!-- STORE band -->
+      <g class="n n--store n--store-box"><rect x="120" y="214" width="640" height="132" rx="14"/></g>
+      <text x="140" y="238" class="band-label">SHARDED INDEX STORE · in memory</text>
+      <g class="n n--shard"><rect x="148" y="250" width="120" height="64" rx="8"/><text x="208" y="278">Shard 0</text><text x="208" y="296" class="sub">r0…r15</text></g>
+      <g class="n n--shard"><rect x="312" y="250" width="120" height="64" rx="8"/><text x="372" y="278">Shard 1</text><text x="372" y="296" class="sub">r0…r15</text></g>
+      <g class="n n--shard"><rect x="476" y="250" width="120" height="64" rx="8"/><text x="536" y="286">…</text></g>
+      <g class="n n--shard"><rect x="640" y="250" width="100" height="64" rx="8"/><text x="690" y="278">Shard 47</text><text x="690" y="296" class="sub">r0…r15</text></g>
+
+      <!-- READ band -->
+      <g class="n n--read"><rect x="40"  y="470" width="150" height="46" rx="9"/><text x="115" y="498">Open the app</text></g>
+      <g class="n n--read"><rect x="300" y="470" width="160" height="46" rx="9"/><text x="380" y="498">Feed service</text></g>
+      <g class="n n--read"><rect x="560" y="470" width="150" height="46" rx="9"/><text x="635" y="498">Broker</text></g>
+      <g class="n n--rank"><rect x="345" y="566" width="220" height="44" rx="9"/><text x="455" y="593">Ranking (selects ≠ scores)</text></g>
+    </g>
+
+    <!-- ───────── PULSES (slowed for readability) ───────── -->
+    <!-- READ: query in -->
+    <g class="pulse pulse--read">
+      <circle r="5"><animateMotion dur="2.2s" begin="0s"   repeatCount="indefinite" rotate="auto"><mpath href="#er1" xlink:href="#er1"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.2s" begin="1.8s" repeatCount="indefinite" rotate="auto"><mpath href="#er2" xlink:href="#er2"/></animateMotion></circle>
+    </g>
+    <!-- READ: scatter to shards -->
+    <g class="pulse pulse--read">
+      <circle r="5"><animateMotion dur="2.4s" begin="3.6s" repeatCount="indefinite" rotate="auto"><mpath href="#es1" xlink:href="#es1"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.4s" begin="3.8s" repeatCount="indefinite" rotate="auto"><mpath href="#es2" xlink:href="#es2"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.4s" begin="4.0s" repeatCount="indefinite" rotate="auto"><mpath href="#es3" xlink:href="#es3"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.4s" begin="4.2s" repeatCount="indefinite" rotate="auto"><mpath href="#es4" xlink:href="#es4"/></animateMotion></circle>
+    </g>
+    <!-- READ: gather back (same tracks, reversed) -->
+    <g class="pulse pulse--read pulse--gather">
+      <circle r="4.5"><animateMotion dur="2.4s" begin="6.4s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#es1" xlink:href="#es1"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="2.4s" begin="6.6s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#es2" xlink:href="#es2"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="2.4s" begin="6.8s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#es3" xlink:href="#es3"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="2.4s" begin="7.0s" repeatCount="indefinite" rotate="auto" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#es4" xlink:href="#es4"/></animateMotion></circle>
+    </g>
+    <!-- READ: merged → ranking -->
+    <g class="pulse pulse--read">
+      <circle r="5"><animateMotion dur="2.2s" begin="9s" repeatCount="indefinite" rotate="auto"><mpath href="#er3" xlink:href="#er3"/></animateMotion></circle>
+    </g>
+
+    <!-- WRITE: post → kafka/hdfs → writer → store -->
+    <g class="pulse pulse--write">
+      <circle r="5"><animateMotion dur="2.3s" begin="0s"   repeatCount="indefinite" rotate="auto"><mpath href="#ew1" xlink:href="#ew1"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.3s" begin="0.4s" repeatCount="indefinite" rotate="auto"><mpath href="#ew2" xlink:href="#ew2"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.3s" begin="2.6s" repeatCount="indefinite" rotate="auto"><mpath href="#ew3" xlink:href="#ew3"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.3s" begin="2.8s" repeatCount="indefinite" rotate="auto"><mpath href="#ew4" xlink:href="#ew4"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.5s" begin="5s"   repeatCount="indefinite" rotate="auto"><mpath href="#ew5" xlink:href="#ew5"/></animateMotion></circle>
+    </g>
+  </svg>
+
+  <figcaption>
+    <strong>The two planes meet only at the sharded index store.</strong> Hit <em>Read path</em> to watch a
+    query fan out across the shards and gather back; hit <em>Write path</em> to follow a new post in through
+    Kafka/HDFS. Reconstruction — not LinkedIn's real topology.
+  </figcaption>
+</figure>
+
+<style>
+.uth-arch{margin:1.8rem 0;border:1px solid var(--main-border-color);border-radius:14px;overflow:hidden;background:var(--card-bg)}
+.uth-arch__bar{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;padding:.6rem .85rem;border-bottom:1px solid var(--main-border-color);background:linear-gradient(180deg,rgb(61 219 217 / 5%),transparent)}
+.uth-arch__legend{font-family:var(--uth-mono);font-size:.72rem;letter-spacing:.18em;color:var(--text-muted-color)}
+.uth-arch__btns{display:flex;gap:.4rem;flex-wrap:wrap}
+.uth-arch__btns button{font-family:var(--uth-mono);font-size:.76rem;cursor:pointer;padding:.3rem .6rem;border-radius:999px;border:1px solid var(--main-border-color);background:transparent;color:var(--text-muted-color);transition:all .15s ease}
+.uth-arch__btns button small{opacity:.7}
+.uth-arch__btns button:hover{color:var(--text-color);border-color:var(--uth-cyan)}
+.uth-arch__btns button.is-active{color:var(--uth-cyan);border-color:var(--uth-cyan);background:rgb(61 219 217 / 10%)}
+.uth-arch[data-flow="write"] .uth-arch__btns [data-act="read"].is-active{} /* handled in JS */
+.uth-arch__svg{display:block;width:100%;height:auto;background:
+  linear-gradient(rgb(127 233 231 / 3.5%) 1px,transparent 1px),
+  linear-gradient(90deg,rgb(127 233 231 / 3.5%) 1px,transparent 1px);
+  background-size:34px 34px}
+/* edges */
+.uth-arch__edges path{fill:none;stroke:var(--main-border-color);stroke-width:2;color:var(--main-border-color);marker-end:url(#uth-ah)}
+.uth-arch[data-flow="read"]  #er1,.uth-arch[data-flow="read"]  #er2,.uth-arch[data-flow="read"]  #er3,
+.uth-arch[data-flow="read"]  #es1,.uth-arch[data-flow="read"]  #es2,.uth-arch[data-flow="read"]  #es3,.uth-arch[data-flow="read"] #es4{stroke:rgb(61 219 217 / 55%);color:rgb(61 219 217 / 55%)}
+.uth-arch[data-flow="write"] #ew1,.uth-arch[data-flow="write"] #ew2,.uth-arch[data-flow="write"] #ew3,
+.uth-arch[data-flow="write"] #ew4,.uth-arch[data-flow="write"] #ew5{stroke:rgb(255 180 84 / 60%);color:rgb(255 180 84 / 60%)}
+/* nodes */
+.uth-arch__nodes rect{fill:var(--card-bg);stroke:var(--main-border-color);stroke-width:1.4}
+.uth-arch__nodes text{fill:var(--heading-color);font-family:var(--uth-mono);font-size:13px;text-anchor:middle;dominant-baseline:middle}
+.uth-arch__nodes text.sub{fill:var(--text-muted-color);font-size:11px}
+.uth-arch__nodes .band-label{fill:var(--text-muted-color);font-size:11px;letter-spacing:.12em;text-anchor:start}
+.n--store-box rect{fill:rgb(127 233 231 / 4%);stroke-dasharray:5 4}
+.n--shard rect{fill:var(--card-hover-bg)}
+.n--write rect{stroke:rgb(255 180 84 / 45%)}
+.n--read rect,.n--rank rect{stroke:rgb(61 219 217 / 45%)}
+.n{transition:opacity .2s ease}
+.uth-arch[data-flow="read"]  .n--write{opacity:.4}
+.uth-arch[data-flow="write"] .n--read,.uth-arch[data-flow="write"] .n--rank{opacity:.4}
+/* pulses */
+.pulse circle{filter:url(#uth-soft)}
+.pulse--read  circle{fill:var(--uth-cyan)}
+.pulse--write circle{fill:var(--uth-amber)}
+.pulse--gather circle{fill:var(--uth-cyan-soft)}
+.uth-arch[data-flow="read"]  .pulse--write{display:none}
+.uth-arch[data-flow="write"] .pulse--read{display:none}
+@media (max-width:600px){.uth-arch__legend{display:none}.uth-arch__nodes text{font-size:12px}}
+</style>
+
+<script>
+(function(){
+  function init(){
+    var fig=document.getElementById('uth-arch-fishdb');
+    if(!fig||fig.dataset.wired)return;
+    fig.dataset.wired='1';
+    var svg=fig.querySelector('svg');
+    function setFlow(f){
+      fig.dataset.flow=f;
+      var r=fig.querySelector('[data-act="read"]'),w=fig.querySelector('[data-act="write"]');
+      if(r)r.classList.toggle('is-active',f==='read');
+      if(w)w.classList.toggle('is-active',f==='write');
+    }
+    var paused=false;
+    function setPaused(p){
+      paused=p; fig.classList.toggle('is-paused',p);
+      var b=fig.querySelector('[data-act="toggle"]');
+      if(b)b.textContent=p?'▶ Play':'❚❚ Pause';
+      try{ if(svg){ p?svg.pauseAnimations():svg.unpauseAnimations(); } }catch(e){}
+    }
+    fig.querySelectorAll('[data-act]').forEach(function(b){
+      b.addEventListener('click',function(e){
+        e.preventDefault();
+        var a=b.getAttribute('data-act');
+        if(a==='toggle'){ setPaused(!paused); }
+        else { setFlow(a); if(paused) setPaused(false); }
+      });
+    });
+    if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){setPaused(true);}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}
+  else{init();}
+})();
+</script>

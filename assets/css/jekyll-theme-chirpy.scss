@@ -1,0 +1,354 @@
+---
+---
+
+/*
+ * ════════════════════════════════════════════════════════════════════════════
+ *  UNDER THE HOOD — custom skin: "Oscilloscope Blueprint"
+ * ════════════════════════════════════════════════════════════════════════════
+ *  A systems-teardown blog should read like a schematic on a dark instrument
+ *  screen: precise, technical, cyan as the *signal* color against blue-black,
+ *  with a sparse warm-amber secondary so it never goes monotone.
+ *
+ *  Type:   Sora (display/headings) · IBM Plex Sans (body) · IBM Plex Mono (code)
+ *          — loaded in _includes/metadata-hook.html
+ *  Palette DARK : bg #0a0f16 · surface #111a26 · text #d4dde8
+ *                 signal-cyan #3ddbd9 · amber #ffb454
+ *  Palette LIGHT: bg #f7fafc · text #16202b · teal #0c8f86 · amber #b9731a
+ *
+ *  Upgrade-safe: we import the theme via @use and then re-declare CSS variables
+ *  + add scoped enhancements. The gem is never edited.
+ * ════════════════════════════════════════════════════════════════════════════
+ */
+
+@use 'abstracts/variables' with (
+  $theme: '{{ site.theme_mode }}',
+  $font-family-base: ('IBM Plex Sans', 'Segoe UI', sans-serif),
+  $font-family-heading: ('Sora', 'IBM Plex Sans', sans-serif)
+);
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* Brand-level tokens reused across both modes */
+:root {
+  --uth-cyan: #3ddbd9;
+  --uth-cyan-soft: #7fe9e7;
+  --uth-amber: #ffb454;
+  --uth-mono: 'IBM Plex Mono', ui-monospace, "SFMono-Regular", monospace;
+}
+
+/* ============================================================================
+   DARK MODE  —  Oscilloscope Blueprint
+   ========================================================================== */
+:root[data-bs-theme='dark'] {
+  /* Framework */
+  --main-bg: #0a0f16;
+  --mask-bg: #1a2230;
+  --main-border-color: #18222f;
+
+  /* Text & headings */
+  --text-color: #c3cdd9;
+  --text-muted-color: #7c889a;
+  --text-muted-highlight-color: #aab6c4;
+  --heading-color: #eef3f8;
+  --label-color: #aab6c4;
+  --blockquote-border-color: #233246;
+  --blockquote-text-color: #8b97a7;
+
+  /* Links / signal accent (cyan) */
+  --link-color: #3ddbd9;
+  --link-underline-color: rgb(61 219 217 / 35%);
+
+  /* Buttons */
+  --button-bg: #111a26;
+  --btn-border-color: #1e2a3a;
+  --btn-backtotop-color: var(--uth-cyan);
+  --btn-backtotop-border-color: #1e2a3a;
+  --card-header-bg: #111a26;
+  --checkbox-color: #46566a;
+  --checkbox-checked-color: var(--link-color);
+
+  --img-bg: radial-gradient(circle, #0c121b 0%, #111a26 100%);
+
+  /* Menu */
+  --menu-bg: #0c131d;
+  --menu-border-color: rgb(61 219 217 / 16%);
+  --menu-shadow-color: rgb(0 0 0 / 60%);
+  --menu-active-color: var(--uth-cyan);
+  --menu-highlight-bg: rgb(61 219 217 / 9%);
+
+  /* Sidebar */
+  --site-title-color: #eef3f8;
+  --site-subtitle-color: #7c889a;
+  --sidebar-bg: linear-gradient(165deg, #0d1622 0%, #0a0f16 55%, #090d13 100%);
+  --sidebar-border-color: #18222f;
+  --sidebar-muted-color: #7c889a;
+  --sidebar-active-color: var(--uth-cyan);
+  --sidebar-hover-bg: rgb(61 219 217 / 9%);
+  --sidebar-btn-bg: #111a26;
+  --sidebar-btn-color: #7c889a;
+  --avatar-border-color: rgb(61 219 217 / 55%);
+
+  /* Topbar */
+  --topbar-bg: rgb(10 15 22 / 72%);
+  --topbar-text-color: var(--text-color);
+  --search-border-color: #233246;
+  --search-icon-color: #5a6678;
+  --input-focus-border-color: var(--uth-cyan);
+
+  /* Home / paginator */
+  --post-list-text-color: #b6c1cf;
+  --btn-patinator-text-color: var(--text-color);
+  --btn-paginator-hover-color: #111a26;
+
+  /* Posts */
+  --toc-highlight: var(--uth-cyan);
+  --toc-popup-border-color: #233246;
+  --tag-hover: rgb(61 219 217 / 18%);
+  --tb-odd-bg: #0f1722;
+  --tb-even-bg: #0b121b;
+  --tb-border-color: #1e2a3a;
+  --footnote-target-bg: rgb(61 219 217 / 25%);
+  --btn-share-color: #7c889a;
+  --btn-share-hover-color: var(--uth-cyan);
+  --card-bg: #0f1722;
+  --card-hover-bg: #15202e;
+  --card-shadow: rgb(0 0 0 / 55%) 0 8px 24px 0, rgb(61 219 217 / 8%) 0 0 0 1px;
+
+  /* kbd / prompts */
+  --kbd-wrap-color: #8b97a7;
+  --kbd-text-color: #eef3f8;
+  --kbd-bg-color: #111a26;
+  --prompt-text-color: rgb(226 232 239 / 80%);
+  --prompt-tip-bg: rgb(17 80 74 / 55%);
+  --prompt-tip-icon-color: var(--uth-cyan);
+  --prompt-info-bg: rgb(13 56 90 / 70%);
+  --prompt-info-icon-color: #4cc2ff;
+  --prompt-warning-bg: rgb(92 64 9 / 70%);
+  --prompt-warning-icon-color: var(--uth-amber);
+  --prompt-danger-bg: rgb(92 28 18 / 70%);
+  --prompt-danger-icon-color: #ff6b6b;
+
+  /* Tags */
+  --tag-border: #233246;
+  --tag-shadow: #0b121b;
+  --dash-color: #233246;
+  --search-tag-bg: #111a26;
+
+  /* Categories */
+  --categories-border: rgb(35 50 70 / 70%);
+  --categories-hover-bg: #15202e;
+  --categories-icon-hover-color: var(--uth-cyan);
+
+  /* Archive */
+  --timeline-node-bg: var(--uth-cyan);
+  --timeline-color: #233246;
+  --timeline-year-dot-color: var(--timeline-color);
+
+  /* Code */
+  --language-border-color: #18222f;
+  --highlight-bg-color: #0b1119;
+  --highlighter-rouge-color: #9fe9e7;
+  --highlight-lineno-color: #5a6678;
+  --inline-code-bg: rgb(61 219 217 / 10%);
+  --code-color: #c3cdd9;
+  --code-header-text-color: #7c889a;
+  --code-header-muted-color: #1e2a3a;
+  --code-header-icon-color: #5a6678;
+  --clipboard-checked-color: var(--uth-cyan);
+  --filepath-text-color: #eef3f8;
+}
+
+/* ============================================================================
+   LIGHT MODE  —  clean paper + deep teal
+   ========================================================================== */
+:root[data-bs-theme='light'] {
+  --main-bg: #f7fafc;
+  --mask-bg: #c1ccd6;
+  --main-border-color: #e6edf3;
+
+  --text-color: #2c3a49;
+  --text-muted-color: #5e6e7e;
+  --text-muted-highlight-color: #16202b;
+  --heading-color: #0f1b27;
+  --label-color: #41525f;
+  --blockquote-border-color: #dde6ee;
+  --blockquote-text-color: #5e6e7e;
+
+  --link-color: #0c8f86;
+  --link-underline-color: rgb(12 143 134 / 30%);
+
+  --button-bg: #ffffff;
+  --btn-border-color: #e0e8ef;
+  --checkbox-checked-color: var(--link-color);
+
+  --site-title-color: #0f1b27;
+  --site-subtitle-color: #5e6e7e;
+  --sidebar-bg: linear-gradient(165deg, #eef5f4 0%, #f7fafc 60%);
+  --sidebar-border-color: #e6edf3;
+  --sidebar-muted-color: #5e6e7e;
+  --sidebar-active-color: #0c8f86;
+  --sidebar-hover-bg: rgb(12 143 134 / 9%);
+  --sidebar-btn-bg: #ffffff;
+  --sidebar-btn-color: #5e6e7e;
+  --avatar-border-color: rgb(12 143 134 / 45%);
+
+  --topbar-bg: rgb(247 250 252 / 82%);
+  --search-border-color: #dde6ee;
+  --search-icon-color: #93a1b0;
+  --input-focus-border-color: #0c8f86;
+
+  --toc-highlight: #0c8f86;
+  --tag-hover: rgb(12 143 134 / 12%);
+  --card-bg: #ffffff;
+  --card-hover-bg: #eef5f4;
+  --btn-share-hover-color: #0c8f86;
+  --timeline-node-bg: #0c8f86;
+  --inline-code-bg: rgb(12 143 134 / 8%);
+  --clipboard-checked-color: #0c8f86;
+
+  --prompt-tip-icon-color: #0c8f86;
+  --prompt-warning-icon-color: #b9731a;
+}
+
+/* ============================================================================
+   UI ENHANCEMENTS  (apply to both modes)
+   ========================================================================== */
+
+/* Brand wordmark in the sidebar: monospace, like a component label */
+#sidebar .site-title {
+  font-family: var(--uth-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+#sidebar .site-subtitle {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+/* Headings: Sora, tighter tracking, with a cyan kicker on the post title */
+h1, h2, h3, h4, h5, .post-content h1, .post-content h2 {
+  letter-spacing: -0.018em;
+}
+
+/* A subtle "signal glow" on links as they hover */
+.post-content a:not(.img-link):not(.no-text-decoration) {
+  text-decoration: none;
+  background-image: linear-gradient(var(--link-color), var(--link-color));
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  transition: background-size 0.25s ease, color 0.2s ease;
+  padding-bottom: 1px;
+}
+.post-content a:not(.img-link):not(.no-text-decoration):hover {
+  background-size: 100% 2px;
+  color: var(--uth-cyan-soft);
+}
+
+/* Section headings get a small monospace tick mark — schematic feel */
+.post-content h2 {
+  position: relative;
+  padding-left: 0.9rem;
+}
+.post-content h2::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.18em;
+  bottom: 0.18em;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--uth-cyan), transparent);
+}
+
+/* Inline code: monospace + signal tint */
+.post-content code {
+  font-family: var(--uth-mono);
+  font-size: 0.86em;
+}
+
+/* Code fences: rounded, bordered, slight glow on the language label */
+.highlight, div.highlighter-rouge {
+  border-radius: 10px;
+}
+
+/* ── Code-block formatting fix ──────────────────────────────────────────────
+   This Chirpy build's Rouge output omits the <pre> wrapper, so the browser
+   collapses newlines/indentation and the code renders as one run-on blob.
+   Force whitespace preservation + horizontal scroll on the block-level <code>
+   inside a highlight container. Scoped tightly so inline `code` is untouched. */
+.highlight > code,
+div[class^='language-'] .highlight > code,
+.highlighter-rouge .highlight > code {
+  display: block;
+  white-space: pre;
+  overflow-x: auto;
+  font-family: var(--uth-mono);
+  font-size: 0.84rem;
+  line-height: 1.55;
+  tab-size: 4;
+  -moz-tab-size: 4;
+}
+
+/* Cards (home post list): lift + cyan edge on hover */
+.post-preview, #post-list .card, .card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+/* Blockquote / callouts: keep the Chirpy prompt look but round the corners */
+.prompt-tip, .prompt-info, .prompt-warning, .prompt-danger {
+  border-radius: 10px;
+}
+
+/* Mermaid diagrams: give them breathing room + a faint frame so they read as "figures" */
+.mermaid {
+  margin: 1.6rem 0;
+  padding: 1.1rem;
+  border-radius: 12px;
+  background: var(--card-bg);
+  border: 1px solid var(--main-border-color);
+}
+
+/* Tag pills: monospace, pill-shaped, signal border on hover */
+.post-tag {
+  font-family: var(--uth-mono);
+  font-size: 0.78rem !important;
+  border-radius: 999px;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+/* Subtle blueprint atmosphere behind the whole page (very faint grid + glow) */
+:root[data-bs-theme='dark'] body {
+  background-image:
+    radial-gradient(900px circle at 12% -8%, rgb(61 219 217 / 7%), transparent 42%),
+    radial-gradient(700px circle at 100% 0%, rgb(255 180 84 / 4%), transparent 40%),
+    linear-gradient(rgb(255 255 255 / 2.2%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 2.2%) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 46px 46px, 46px 46px;
+  background-attachment: fixed;
+}
+:root[data-bs-theme='light'] body {
+  background-image:
+    radial-gradient(900px circle at 12% -8%, rgb(12 143 134 / 6%), transparent 42%),
+    linear-gradient(rgb(15 27 39 / 2.6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(15 27 39 / 2.6%) 1px, transparent 1px);
+  background-size: 100% 100%, 46px 46px, 46px 46px;
+  background-attachment: fixed;
+}
+
+/* Staggered fade-in for the post content on load — one orchestrated moment */
+@media (prefers-reduced-motion: no-preference) {
+  .post {
+    animation: uth-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes uth-rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}

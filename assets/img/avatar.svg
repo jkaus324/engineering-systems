@@ -1,0 +1,52 @@
+<svg width="224" height="224" viewBox="0 0 224 224" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Under the Hood logo">
+  <defs>
+    <radialGradient id="uth-bg" cx="38%" cy="28%" r="85%">
+      <stop offset="0%" stop-color="#12202e"/>
+      <stop offset="55%" stop-color="#0c121b"/>
+      <stop offset="100%" stop-color="#070b11"/>
+    </radialGradient>
+    <linearGradient id="uth-signal" x1="0" y1="112" x2="224" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3ddbd9" stop-opacity="0.25"/>
+      <stop offset="45%" stop-color="#3ddbd9"/>
+      <stop offset="60%" stop-color="#7fe9e7"/>
+      <stop offset="100%" stop-color="#3ddbd9" stop-opacity="0.25"/>
+    </linearGradient>
+    <filter id="uth-glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- base -->
+  <rect width="224" height="224" rx="40" fill="url(#uth-bg)"/>
+
+  <!-- faint blueprint grid -->
+  <g stroke="#3ddbd9" stroke-opacity="0.07" stroke-width="1">
+    <path d="M0 56 H224 M0 112 H224 M0 168 H224"/>
+    <path d="M56 0 V224 M112 0 V224 M168 0 V224"/>
+  </g>
+
+  <!-- oscilloscope signal sweeping across the middle -->
+  <polyline
+    points="20,128 56,128 70,128 84,92 98,150 112,108 126,128 150,128 168,86 182,128 204,128"
+    fill="none" stroke="url(#uth-signal)" stroke-width="4"
+    stroke-linecap="round" stroke-linejoin="round" filter="url(#uth-glow)"/>
+
+  <!-- UTH monogram -->
+  <text x="112" y="78" text-anchor="middle"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="46" font-weight="600" letter-spacing="2"
+        fill="#eef3f8">UTH</text>
+
+  <!-- amber tick: the sparse secondary accent -->
+  <circle cx="168" cy="86" r="4.5" fill="#ffb454" filter="url(#uth-glow)"/>
+
+  <!-- baseline label -->
+  <text x="112" y="186" text-anchor="middle"
+        font-family="'IBM Plex Mono', ui-monospace, monospace"
+        font-size="13" font-weight="500" letter-spacing="3"
+        fill="#3ddbd9" fill-opacity="0.8">TEARDOWN</text>
+</svg>

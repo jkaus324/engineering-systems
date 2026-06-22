@@ -1,0 +1,23 @@
+# ─── Jekyll / Chirpy build output ───────────────────────────────────────────────
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+vendor/
+.bundle/
+
+# ─── Compiled code artifacts (per-teardown prototypes) ────────────────────────────
+*.class            # Java
+*.exe
+*.test
+*.out
+__pycache__/       # Python
+*.pyc
+target/            # Rust / generic build dirs
+
+# ─── OS / editor noise ────────────────────────────────────────────────────────────
+.DS_Store
+*.swp
+.idea/
+.vscode/
+*.iml

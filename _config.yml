@@ -1,0 +1,145 @@
+# ─── Chirpy theme config ───────────────────────────────────────────────────────
+# Theme gem (used when building locally / via Actions).
+theme: jekyll-theme-chirpy
+
+# Language / timezone.
+lang: en
+timezone: Asia/Kolkata
+
+# ─── Site identity — EDIT THESE ─────────────────────────────────────────────────
+title: Under the Hood
+tagline: ""   # subtitle under the site title in the sidebar (left blank intentionally)
+
+# Sidebar logo (the circle). Custom "Oscilloscope Blueprint" mark.
+avatar: /assets/img/avatar.svg
+description: >-
+  Code-level teardowns of how real companies build their systems, inferred from their
+  public engineering blogs — each with a runnable prototype. Educational, not affiliated.
+
+# IMPORTANT: set this to your published URL with NO trailing slash.
+#   - User/org site:   https://<username>.github.io
+#   - Project site:    https://<username>.github.io/engineering-systems
+url: "https://jkaus324.github.io"
+
+# If you host as a PROJECT site (repo named "engineering-systems"), set:
+#   baseurl: "/engineering-systems"
+# If you host as a USER site (repo named "<username>.github.io"), leave it empty:
+baseurl: "/engineering-systems"
+
+github:
+  username: jkaus324
+social:
+  name: Jatin Kaushal
+  email: ""                        # optional
+  links:
+    # - https://www.linkedin.com/in/YOUR-HANDLE   # TODO: add your LinkedIn URL, then commit + push
+
+# ─── Plugins ────────────────────────────────────────────────────────────────────────
+plugins:
+  - jekyll-paginate
+  - jekyll-seo-tag
+  - jekyll-archives
+  - jekyll-sitemap
+
+# Generates the per-category and per-tag pages the Categories/Tags tabs link to.
+# Without this, clicking a category or tag leads to a 404.
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/
+
+# ─── Permalinks ───────────────────────────────────────────────────────────────────
+# Chirpy's standard post URL — clean "/posts/<title>/" (avoids category-based URLs
+# that can contain spaces, e.g. "/feed systems/...").
+permalink: /posts/:title/
+
+# ─── Appearance ─────────────────────────────────────────────────────────────────
+theme_mode:        # [light | dark] — leave empty to follow the OS / show a toggle
+toc: true          # table of contents on the right of each post
+comments:
+  provider:        # leave empty for now (giscus/disqus/utterances later)
+
+# ─── Diagrams: Mermaid ────────────────────────────────────────────────────────────
+# Chirpy renders Mermaid when a post sets `mermaid: true` in its front matter.
+
+# ─── Pagination ────────────────────────────────────────────────────────────────────
+paginate: 8
+
+# ─── Build settings ───────────────────────────────────────────────────────────────
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: highlight
+    span:
+      line_numbers: false
+    block:
+      line_numbers: false
+
+# Chirpy's HTML-compress layout collapses newlines outside <pre>. This build's
+# Rouge output has no <pre>, so without the right settings the compressor eats
+# the newlines inside code blocks. Keep code line feeds intact.
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: all   # skip HTML compression entirely — this build's Rouge omits <pre>,
+                # and the compressor collapses code newlines without it. The minify
+                # savings are negligible for a blog; correct code rendering matters more.
+
+# Chirpy renders the nav tabs (About, Archives, …) from this collection.
+collections:
+  tabs:
+    output: true
+    sort_by: order
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: true
+      toc: true
+  - scope:
+      path: _drafts
+    values:
+      comments: false
+  - scope:
+      path: ""
+      type: tabs   # see `_tabs`
+    values:
+      layout: page
+      permalink: /:title/
+  - scope:
+      path: assets/img/favicons
+    values:
+      swcache: true
+  - scope:
+      path: assets/js/dist
+    values:
+      swcache: true
+
+# Keep the code prototypes, deep-dive docs, and meta files OUT of the built site —
+# they live in the repo for readers to browse/clone on GitHub, not as blog pages.
+exclude:
+  - "*.gem"
+  - "*.gemspec"
+  - tools
+  - README.md
+  - LICENSE
+  - "*.config.js"
+  - package*.json
+  - teardowns/        # per-teardown code + DESIGN docs (browsed on GitHub)
+  - SERIES.md
+  - NEW_TEARDOWN.md
+  - CONTRIBUTING.md
+  - DESIGN_NOTES.md  # this repo's redesign rationale (browsed on GitHub, not a site page)
+  - vendor
