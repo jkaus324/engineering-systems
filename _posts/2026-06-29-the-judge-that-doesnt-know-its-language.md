@@ -4,7 +4,7 @@ description: >-
   How one language-neutral spec runs 100+ machine-coding problems across four languages —
   runtime dispatch for Python, JavaScript, and Java, code generation for C++, and the thin
   output contract that makes adding a new language a one-file change.
-date: 2026-06-29 09:00:00 +0530
+date: 2026-06-29 01:00:00 +0530
 categories: [Build Notes, Developer Tools]
 tags: [codejunction, system-design, testing, code-generation, reflection]
 mermaid: true
